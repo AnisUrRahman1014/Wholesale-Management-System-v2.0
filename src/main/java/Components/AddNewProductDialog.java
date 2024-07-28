@@ -37,13 +37,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         prodIdField.setEnabled(true);
         prodNameField.setEnabled(true);
         products = ProductController.getProductList();
-        DefaultTableModel model=(DefaultTableModel) productsTable.getModel();
-        model.setRowCount(0);
-        int count = model.getRowCount();
-        for(Product prod: products){
-            Object row[]={++count,prod.getProdID(), prod.getProdName()};
-            model.addRow(row);
-        }
+        updateTable();
         prodIdField.setText("");
         prodNameField.setText("");        
         pieceRB.setSelected(true);
@@ -60,6 +54,16 @@ public class AddNewProductDialog extends javax.swing.JDialog {
             deleteSelectedRow();
         });
         popupMenu.add(deleteItem);
+    }
+    
+    private void updateTable(){
+        DefaultTableModel model=(DefaultTableModel) productsTable.getModel();
+        model.setRowCount(0);
+        int count = model.getRowCount();
+        for(Product prod: products){
+            Object row[]={++count,prod.getProdID(), prod.getProdName(), prod.getQuantity(),(int) prod.getTotalCost(),(int)prod.getCostPerUnit(),(int)prod.getSalePerUnit(),prod.getUnit()};
+            model.addRow(row);
+        }
     }
     
     private void handleUnitChange(){
@@ -102,7 +106,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
     
     private boolean validateFields(){
         boolean success = true;
-        if(prodIdField.getText().isBlank() || prodNameField.getText().isBlank() || currentUnit == null){
+        if(prodIdField.getText().isBlank() || prodNameField.getText().isBlank() || currentUnit == null || !(Double.valueOf(quantityField.getText()) > 0 || !(Integer.valueOf(totalCostField.getText()) > 0) )){
             success=false;
         }
         return success;
@@ -132,16 +136,16 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         // PLOTTING FIELDS
         prodIdField.setText(selectedProd.getProdID());
         prodNameField.setText(selectedProd.getProdName());
-        totalCostField.setText(String.valueOf((int)selectedProd.getTotalCost()));
+        totalCostField.setText(String.valueOf(0));
         costPerPieceField.setText(String.valueOf(selectedProd.getCostPerUnit()));
         salePerPieceField.setText(String.valueOf((int)selectedProd.getSalePerUnit()));
         String unitType = selectedProd.getUnit();
         handleUnitType(unitType); 
         handleQuantityFormatUpdate();
         if(unitType.equals(ManagementSystemCPU.PIECE)){
-            quantityField.setText(String.valueOf((int)selectedProd.getQuantity()));
+            quantityField.setText(String.valueOf(0));
         }else{
-            quantityField.setText(String.valueOf(selectedProd.getQuantity()));
+            quantityField.setText(String.valueOf(0.0f));
         }
         
         updateBtn.setEnabled(true);
@@ -204,6 +208,10 @@ public class AddNewProductDialog extends javax.swing.JDialog {
     }
     
     private void updateSelectedProduct(){
+        if(!validateFields()){
+            JOptionPane.showMessageDialog(this,"Please check the fields first.","Failure",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         Product prod = new Product(prodIdField.getText(),prodNameField.getText(),Double.valueOf(quantityField.getText()),Double.valueOf(totalCostField.getText()),Double.valueOf(salePerPieceField.getText()),Double.valueOf(costPerPieceField.getText()),currentUnit, true);
         boolean isUploaded = ProductController.updateProduct(prod);
         if(isUploaded){
@@ -334,12 +342,19 @@ public class AddNewProductDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "S/No.", "Prod. Id", "Product"
+                "S/No.", "Prod. Id", "Product", "Total Qty", "Total Cost", "Avg. C/P", "Avg. S/P", "Unit Type"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -421,18 +436,18 @@ public class AddNewProductDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(35, 35, 35)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(prodIdField, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(prodNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(clearBtn))
+                                .addComponent(jSeparator3)
+                                .addComponent(jSeparator1)
+                                .addComponent(jSeparator2))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -452,28 +467,25 @@ public class AddNewProductDialog extends javax.swing.JDialog {
                                 .addGap(12, 12, 12)
                                 .addComponent(pieceRB)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(weightRB)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator1)
+                                .addComponent(weightRB))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                                .addComponent(clearBtn))
-                            .addComponent(jSeparator2)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jSeparator3))
-                        .addGap(9, 9, 9))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(updateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(confirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 565, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(35, 35, 35)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(prodIdField, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(prodNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(74, 74, 74)
+                                .addComponent(updateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(confirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(12, 12, 12)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
