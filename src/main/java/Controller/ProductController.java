@@ -146,12 +146,38 @@ public class ProductController {
                 return false;
             }
             // CALCULATE THE AVERAGE FOR THE SALEPERPIECE, COSTPERPIECE AND TOTAL COST
+            int grandTotalCost=0;
+            int avgCostPerUnit=0;
+            int avgSalePerUnit=0;
+            double totalQuantity=0;
+            pst = con.prepareStatement("select AVG(costPerUnit) as avgCostPerUnit ,AVG(salePerUnit) as avgSalePerUnit,sum(totalCost) as totalSum from purchaseTransactions where prodId=?");
+            pst.setString(1,prod.getProdID());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                avgCostPerUnit = rs.getInt(1);
+                avgSalePerUnit = rs.getInt(2);
+                grandTotalCost = rs.getInt(3);
+            }else{
+                throw new Error("Can't fetch prerequisites. | No records found to calculate average values");
+            }
+            
+            // UPDATE QUANTITY
+            pst = con.prepareStatement("select quantity from products where prodId=?");
+            pst.setString(1,prod.getProdID());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                double oldQuantity = rs.getDouble(1);
+                totalQuantity = oldQuantity+prod.getQuantity();
+            }else{
+                throw new Error("Can't calculate quantity");
+            }
+            
             // UPDATE THE PRODUCT USING THESE AVERAGE VALUES
             pst = con.prepareStatement("update products set quantity=?, totalCost=?, salePerPiece=?, costPerPiece=? where productName=?");
-            pst.setDouble(1, prod.getQuantity());
-            pst.setDouble(2,prod.getTotalCost());
-            pst.setDouble(3,prod.getSalePerUnit());
-            pst.setDouble(4,prod.getCostPerUnit());
+            pst.setDouble(1, totalQuantity);
+            pst.setDouble(2,grandTotalCost);
+            pst.setDouble(3,avgSalePerUnit);
+            pst.setDouble(4,avgCostPerUnit);
             pst.setString(5,prod.getProdName());
             pst.executeUpdate();
             success=true;

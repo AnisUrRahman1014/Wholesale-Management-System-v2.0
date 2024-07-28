@@ -2,7 +2,7 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="rateTypeBtnGroup">
+    <Component class="javax.swing.ButtonGroup" name="unitTypeBtnGroup">
     </Component>
     <Component class="javax.swing.ButtonGroup" name="unitSizeBtnGroup">
     </Component>
@@ -504,15 +504,15 @@
                                                           <EmptySpace max="-2" attributes="0"/>
                                                           <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                                                       </Group>
-                                                      <Component id="pieceRB" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="pieceRB$$" alignment="0" min="-2" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
                                               <Group type="102" alignment="0" attributes="0">
                                                   <Component id="jLabel10" min="-2" pref="105" max="-2" attributes="0"/>
                                                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                                  <Component id="wholesaleRB" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="pieceRB" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="retailRB" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="weightRB" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
                                       </Group>
@@ -545,14 +545,14 @@
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="boxRB" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="packageRB" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="pieceRB" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="pieceRB$$" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="wholesaleRB" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="retailRB" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="pieceRB" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="weightRB" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -598,6 +598,7 @@
             <Component class="javax.swing.JRadioButton" name="boxRB">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Box"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boxRBActionPerformed"/>
@@ -606,6 +607,7 @@
             <Component class="javax.swing.JRadioButton" name="packageRB">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Package"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="packageRBActionPerformed"/>
@@ -657,12 +659,13 @@
                 <Property name="text" type="java.lang.String" value="Product:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JRadioButton" name="pieceRB">
+            <Component class="javax.swing.JRadioButton" name="pieceRB$$">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Piece"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pieceRBActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pieceRB$$ActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel12">
@@ -671,6 +674,7 @@
                   <Font name="Segoe UI" size="14" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Prod. Discount"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JFormattedTextField" name="quantityField">
@@ -690,6 +694,7 @@
                 <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
                   <Format format="#0" subtype="-1" type="0"/>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prodDiscountField_PercentageActionPerformed"/>
@@ -701,6 +706,7 @@
                 <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
                   <Format format="#0" subtype="-1" type="0"/>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="prodDiscountField_RsFocusLost"/>
@@ -713,6 +719,7 @@
                   <Font name="Segoe UI" size="14" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Rs. /"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel14">
@@ -721,6 +728,7 @@
                   <Font name="Segoe UI" size="14" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="%"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="addNewProductBtn">
@@ -736,23 +744,23 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="14" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Rate Type: "/>
+                <Property name="text" type="java.lang.String" value="Unit Type"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JRadioButton" name="wholesaleRB">
+            <Component class="javax.swing.JRadioButton" name="pieceRB">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Wholesale"/>
+                <Property name="text" type="java.lang.String" value="Piece"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wholesaleRBActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pieceRBActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JRadioButton" name="retailRB">
+            <Component class="javax.swing.JRadioButton" name="weightRB">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Retail"/>
+                <Property name="text" type="java.lang.String" value="Weight"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="retailRBActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="weightRBActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

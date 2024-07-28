@@ -53,12 +53,12 @@ public class BillingMenu extends javax.swing.JPanel {
     }
     
     private void createRadioBtnGroups(){
-        rateTypeBtnGroup.add(wholesaleRB);
-        rateTypeBtnGroup.add(retailRB);
+        unitTypeBtnGroup.add(pieceRB);
+        unitTypeBtnGroup.add(weightRB);
         
         unitSizeBtnGroup.add(boxRB);
         unitSizeBtnGroup.add(packageRB);
-        unitSizeBtnGroup.add(pieceRB);
+        unitSizeBtnGroup.add(pieceRB$$);
     }
     
     private void defaultSettings(){
@@ -67,7 +67,7 @@ public class BillingMenu extends javax.swing.JPanel {
         products = new ArrayList<>();
         currentDate = new Date(new java.util.Date().getTime());
         billDateField.setText(String.valueOf(currentDate));
-        wholesaleRB.setSelected(true);
+        pieceRB.setSelected(true);
         boxRB.setSelected(true);
         quantityField.setText("1");
         prodDiscountField_Rs.setText("0");
@@ -165,22 +165,22 @@ public class BillingMenu extends javax.swing.JPanel {
     }
 
     private void updateRowTotal(int row, int col) {
-//        DefaultTableModel model = (DefaultTableModel) billTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) billTable.getModel();
 //        String rateType = model.getValueAt(row, 6).toString();
 //        String unitSize = model.getValueAt(row, 4).toString();   
-//        Product product = products.get(row); // Assuming you have a way to map row to product
-//        
-//        int ratePerUnit = getRatePerUnit(product, unitSize, rateType);
-//        if(col == 5){
-//            ratePerUnit =(int) model.getValueAt(row, col);
-//        }else{
-//            model.setValueAt(ratePerUnit, row, 5);
-//        }        
-//        int discount = Integer.valueOf(model.getValueAt(row, 7).toString());
-//        int quantity = Integer.parseInt(model.getValueAt(row, 3).toString());
-//        int total = (quantity * ratePerUnit)-discount;
-//        model.setValueAt(total, row, 8);
-//        updateTotalBill();
+        Product product = products.get(row); // Assuming you have a way to map row to product
+        
+        int ratePerUnit = (int) product.getSalePerUnit();
+        if(col == 5){
+            ratePerUnit =(int) model.getValueAt(row, col);
+        }else{
+            model.setValueAt(ratePerUnit, row, 5);
+        }        
+        int discount = Integer.valueOf(model.getValueAt(row, 7).toString());
+        int quantity = Integer.parseInt(model.getValueAt(row, 3).toString());
+        int total = (quantity * ratePerUnit)-discount;
+        model.setValueAt(total, row, 8);
+        updateTotalBill();
     }
 
 //    private int getRatePerUnit(Product product, String unitSize, String rateType) {
@@ -335,8 +335,8 @@ public class BillingMenu extends javax.swing.JPanel {
             updateUnitSize(boxRB.getText());
         }else if(packageRB.isSelected()){
             updateUnitSize(packageRB.getText());
-        }else if(pieceRB.isSelected()){
-            updateUnitSize(pieceRB.getText());
+        }else if(pieceRB$$.isSelected()){
+            updateUnitSize(pieceRB$$.getText());
         }
         
 //        if(wholesaleRB.isSelected()){
@@ -361,6 +361,16 @@ public class BillingMenu extends javax.swing.JPanel {
             currentItem.setUnitSize(unitSize);
         }else{
             JOptionPane.showMessageDialog(this,"No product selected. Please choose a product first","Error",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void handleQuantityFormatUpdate(){
+        if(pieceRB.isSelected()){
+            // Changing text field formating
+            quantityField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        }else{
+            // Changing text field formating
+            quantityField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
         }
     }
     
@@ -575,7 +585,7 @@ public class BillingMenu extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        rateTypeBtnGroup = new javax.swing.ButtonGroup();
+        unitTypeBtnGroup = new javax.swing.ButtonGroup();
         unitSizeBtnGroup = new javax.swing.ButtonGroup();
         jSeparator2 = new javax.swing.JSeparator();
         headerPanel = new javax.swing.JPanel();
@@ -610,7 +620,7 @@ public class BillingMenu extends javax.swing.JPanel {
         jSeparator4 = new javax.swing.JSeparator();
         jLabel9 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        pieceRB = new javax.swing.JRadioButton();
+        pieceRB$$ = new javax.swing.JRadioButton();
         jLabel12 = new javax.swing.JLabel();
         quantityField = new javax.swing.JFormattedTextField();
         prodDiscountField_Percentage = new javax.swing.JFormattedTextField();
@@ -619,8 +629,8 @@ public class BillingMenu extends javax.swing.JPanel {
         jLabel14 = new javax.swing.JLabel();
         addNewProductBtn = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        wholesaleRB = new javax.swing.JRadioButton();
-        retailRB = new javax.swing.JRadioButton();
+        pieceRB = new javax.swing.JRadioButton();
+        weightRB = new javax.swing.JRadioButton();
         footerPanel = new javax.swing.JPanel();
         proceedBtn = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
@@ -871,6 +881,7 @@ public class BillingMenu extends javax.swing.JPanel {
         });
 
         boxRB.setText("Box");
+        boxRB.setEnabled(false);
         boxRB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 boxRBActionPerformed(evt);
@@ -878,6 +889,7 @@ public class BillingMenu extends javax.swing.JPanel {
         });
 
         packageRB.setText("Package");
+        packageRB.setEnabled(false);
         packageRB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 packageRBActionPerformed(evt);
@@ -910,15 +922,17 @@ public class BillingMenu extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Product:");
 
-        pieceRB.setText("Piece");
-        pieceRB.addActionListener(new java.awt.event.ActionListener() {
+        pieceRB$$.setText("Piece");
+        pieceRB$$.setEnabled(false);
+        pieceRB$$.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pieceRBActionPerformed(evt);
+                pieceRB$$ActionPerformed(evt);
             }
         });
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel12.setText("Prod. Discount");
+        jLabel12.setEnabled(false);
 
         quantityField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         quantityField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -938,6 +952,7 @@ public class BillingMenu extends javax.swing.JPanel {
         });
 
         prodDiscountField_Percentage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        prodDiscountField_Percentage.setEnabled(false);
         prodDiscountField_Percentage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 prodDiscountField_PercentageActionPerformed(evt);
@@ -950,6 +965,7 @@ public class BillingMenu extends javax.swing.JPanel {
         });
 
         prodDiscountField_Rs.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        prodDiscountField_Rs.setEnabled(false);
         prodDiscountField_Rs.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 prodDiscountField_RsFocusLost(evt);
@@ -963,9 +979,11 @@ public class BillingMenu extends javax.swing.JPanel {
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel13.setText("Rs. /");
+        jLabel13.setEnabled(false);
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel14.setText("%");
+        jLabel14.setEnabled(false);
 
         addNewProductBtn.setText("+");
         addNewProductBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -975,19 +993,19 @@ public class BillingMenu extends javax.swing.JPanel {
         });
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel10.setText("Rate Type: ");
+        jLabel10.setText("Unit Type");
 
-        wholesaleRB.setText("Wholesale");
-        wholesaleRB.addActionListener(new java.awt.event.ActionListener() {
+        pieceRB.setText("Piece");
+        pieceRB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wholesaleRBActionPerformed(evt);
+                pieceRBActionPerformed(evt);
             }
         });
 
-        retailRB.setText("Retail");
-        retailRB.addActionListener(new java.awt.event.ActionListener() {
+        weightRB.setText("Weight");
+        weightRB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                retailRBActionPerformed(evt);
+                weightRBActionPerformed(evt);
             }
         });
 
@@ -1036,13 +1054,13 @@ public class BillingMenu extends javax.swing.JPanel {
                                                     .addComponent(prodDiscountField_Percentage, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                     .addComponent(jLabel14))
-                                                .addComponent(pieceRB)))
+                                                .addComponent(pieceRB$$)))
                                         .addGroup(billingDetailsPanelLayout.createSequentialGroup()
                                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(18, 18, 18)
-                                            .addComponent(wholesaleRB)
+                                            .addComponent(pieceRB)
                                             .addGap(18, 18, 18)
-                                            .addComponent(retailRB))))))
+                                            .addComponent(weightRB))))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addNewProductBtn)))
                 .addContainerGap(39, Short.MAX_VALUE))
@@ -1065,12 +1083,12 @@ public class BillingMenu extends javax.swing.JPanel {
                     .addGroup(billingDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(boxRB)
                         .addComponent(packageRB)
-                        .addComponent(pieceRB)))
+                        .addComponent(pieceRB$$)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(billingDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(wholesaleRB)
-                    .addComponent(retailRB))
+                    .addComponent(pieceRB)
+                    .addComponent(weightRB))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(billingDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -1357,12 +1375,12 @@ public class BillingMenu extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_totalBillFieldActionPerformed
 
-    private void pieceRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pieceRBActionPerformed
+    private void pieceRB$$ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pieceRB$$ActionPerformed
         // TODO add your handling code here:
-        if(pieceRB.isSelected()){
-            updateUnitSize(pieceRB.getText());
+        if(pieceRB$$.isSelected()){
+            updateUnitSize(pieceRB$$.getText());
         }
-    }//GEN-LAST:event_pieceRBActionPerformed
+    }//GEN-LAST:event_pieceRB$$ActionPerformed
 
     private void newCustomerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newCustomerBtnActionPerformed
         // TODO add your handling code here:
@@ -1415,15 +1433,15 @@ public class BillingMenu extends javax.swing.JPanel {
         updateCurrentItem();
     }//GEN-LAST:event_packageRBActionPerformed
 
-    private void wholesaleRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wholesaleRBActionPerformed
+    private void pieceRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pieceRBActionPerformed
         // TODO add your handling code here:
         updateCurrentItem();
-    }//GEN-LAST:event_wholesaleRBActionPerformed
+    }//GEN-LAST:event_pieceRBActionPerformed
 
-    private void retailRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_retailRBActionPerformed
+    private void weightRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightRBActionPerformed
         // TODO add your handling code here:        
         updateCurrentItem();
-    }//GEN-LAST:event_retailRBActionPerformed
+    }//GEN-LAST:event_weightRBActionPerformed
 
     private void quantityFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_quantityFieldKeyReleased
         // TODO add your handling code here:
@@ -1584,19 +1602,19 @@ public class BillingMenu extends javax.swing.JPanel {
     private javax.swing.JButton newCustomerBtn;
     private javax.swing.JRadioButton packageRB;
     private javax.swing.JRadioButton pieceRB;
+    private javax.swing.JRadioButton pieceRB$$;
     private javax.swing.JButton proceedBtn;
     private javax.swing.JFormattedTextField prodDiscountField_Percentage;
     private javax.swing.JFormattedTextField prodDiscountField_Rs;
     private javax.swing.JComboBox<String> productCB;
     private javax.swing.JFormattedTextField quantityField;
-    private javax.swing.ButtonGroup rateTypeBtnGroup;
-    private javax.swing.JRadioButton retailRB;
     private javax.swing.JLabel selectedCtmLabel;
     private javax.swing.JFormattedTextField taxField;
     private javax.swing.JTextField totalBillField;
     private javax.swing.JTextField totalDiscountField;
     private javax.swing.ButtonGroup unitSizeBtnGroup;
-    private javax.swing.JRadioButton wholesaleRB;
+    private javax.swing.ButtonGroup unitTypeBtnGroup;
+    private javax.swing.JRadioButton weightRB;
     // End of variables declaration//GEN-END:variables
 
 }
