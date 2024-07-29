@@ -20,7 +20,7 @@ public class HomeScreen extends javax.swing.JFrame {
 //        tabbedContainer.add("Employee Attendance", new EmployeeAttendance());
 //        tabbedContainer.add("Manage Payrolls", new PayrollManagementScreen());
         setMaximumSize(ManagementSystemCPU.getScreenSize());
-        setTitle("Wholesale Management System | Main Menu");   
+        setTitle("Ghussia Shoppers Management System | Main Menu");   
         pack();
     }
 

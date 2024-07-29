@@ -52,7 +52,8 @@ public class ExcelInvoiceGenerator {
                 workbook.write(fos);
             }
 //            success = PrintInvoice.print(invoicesDir.resolve(fileName).toString());
-            PrintInvoice.printExcelSheet(workbook);
+                success = true;
+//            PrintInvoice.printExcelSheet(workbook);
         } catch (IOException e) {
             e.printStackTrace();
         }        

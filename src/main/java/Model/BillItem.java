@@ -1,21 +1,19 @@
 package Model;
 public class BillItem {
     private final Product product;
-    private int quantity;
-    private String unitSize;
+    private double quantity;
     private int ratePerUnit;
-    private String rateType;
+    private String unitType;
     private int total;
     private int discount = 0;
 
-    public BillItem(Product product, int quantity,String unitSize, int ratePerUnit,int discount, String rateType) {
+    public BillItem(Product product, double quantity, int ratePerUnit,int discount, String unitType) {
         this.product = product;
         this.quantity = quantity;
-        this.unitSize = unitSize;
         this.ratePerUnit = ratePerUnit;
-        this.rateType = rateType;
+        this.unitType = unitType;
         this.discount = discount;
-        this.total = quantity * ratePerUnit - this.discount;
+        this.total = (int)(quantity * ratePerUnit - this.discount);
     }
     
     public BillItem(Product product) {
@@ -26,40 +24,32 @@ public class BillItem {
         return product;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
-    }
-
-    public String getUnitSize() {
-        return unitSize;
     }
 
     public int getRatePerUnit() {
         return ratePerUnit;
     }
 
-    public String getRateType() {
-        return rateType;
+    public String getUnitType() {
+        return unitType;
     }
 
     public int getTotal() {
         return total;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
-    }
-
-    public void setUnitSize(String unitSize) {
-        this.unitSize = unitSize;
     }
 
     public void setRatePerUnit(int ratePerUnit) {
         this.ratePerUnit = ratePerUnit;
     }
 
-    public void setRateType(String rateType) {
-        this.rateType = rateType;
+    public void setUnitType(String unitType) {
+        this.unitType = unitType;
     }
 
     public void setTotal(int total) {

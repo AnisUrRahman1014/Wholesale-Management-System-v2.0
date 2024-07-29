@@ -42,7 +42,7 @@ public class BillDisplayDialog extends javax.swing.JDialog {
         Bill bill = BillController.getBill(billId, ctm);
         int count = 0;
         for(BillItem currentItem: bill.getBillItems()){
-            Object row[]={count,currentItem.getProduct().getProdID(), currentItem.getProduct().getProdName(),currentItem.getQuantity(),currentItem.getUnitSize(),currentItem.getRatePerUnit(),currentItem.getRateType(),currentItem.getDiscount(),currentItem.getTotal()};
+            Object row[]={count,currentItem.getProduct().getProdID(), currentItem.getProduct().getProdName(),currentItem.getQuantity(),currentItem.getRatePerUnit(),currentItem.getUnitType(),currentItem.getDiscount(),currentItem.getTotal()};
             model.addRow(row);
         }        
     }
@@ -93,14 +93,14 @@ public class BillDisplayDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "S/No.", "Product ID", "Product", "Quantity", "Unit", "Rate / Unit", "Rate Type", "Discount", "Total"
+                "S/No.", "Product ID", "Product", "Quantity", "Rate / Unit", "Unit Type", "Discount", "Total"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false, true, true, true, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {

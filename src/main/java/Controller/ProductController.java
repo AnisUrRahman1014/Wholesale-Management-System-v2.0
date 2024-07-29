@@ -227,4 +227,38 @@ public class ProductController {
         }
         return products;
     }
+    
+    public static boolean handleProductSale(Product prod, double soldQuantity){
+        boolean success = false;
+        double updatedQty = 0;
+        try{
+            con = connect.connectDB();
+            // GET TOTAL QUANTITY
+            pst = con.prepareStatement("select quantity from products where prodId=?");
+            pst.setString(1,prod.getProdID());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                double currentQuantity = rs.getDouble(1);
+                updatedQty += currentQuantity;
+            }else{
+                throw new Error("Error updating quantity");
+            }
+            updatedQty -= soldQuantity; 
+            pst = con.prepareStatement("update products set quantity = ? where productName='"+prod.getProdName()+"'");
+            pst.setDouble(1,updatedQty);
+            pst.executeUpdate();
+            success=true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+                if(con!=null){
+                    con.close();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
 }

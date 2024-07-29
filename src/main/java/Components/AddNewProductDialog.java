@@ -27,6 +27,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         initComponents();
         defaultSettings();
         addTableMouseListener();
+        setLocationRelativeTo(null);
     }
     
     private void defaultSettings(){

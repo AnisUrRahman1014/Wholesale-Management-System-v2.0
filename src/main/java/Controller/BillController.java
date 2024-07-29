@@ -24,7 +24,7 @@ public class BillController {
             con = connect.connectDB();
             pst = con.prepareStatement("insert into bills values(?,?,?,?,?,?,?,?,?)");
             pst.setString(1, bill.getBillId());
-            pst.setString(2, bill.getCustomer().getName());
+            pst.setString(2, bill.getCustomer().getName());   
             pst.setDate(3, bill.getDate());
             pst.setInt(4, bill.getTotalBill());
             pst.setInt(5, bill.getTotalFinalBill());
@@ -35,19 +35,22 @@ public class BillController {
             
             pst.execute();
             pst.close();
-            pst = con.prepareStatement("insert into billItems values(?,?,?,?,?,?,?,?)");
-            for(BillItem item: bill.getBillItems()){
-                System.out.println("IDHR DEKH");
+            pst = con.prepareStatement("insert into billItems values(?,?,?,?,?,?)");
+            for(BillItem item: bill.getBillItems()){                
                 pst.setString(1, bill.getBillId());
                 pst.setString(2, item.getProduct().getProdID());
-                pst.setInt(3,item.getQuantity());
+                pst.setDouble(3,item.getQuantity());
                 pst.setInt(4,item.getRatePerUnit());
                 pst.setInt(5,item.getDiscount());
                 pst.setInt(6,item.getTotal());
-                pst.setString(7,item.getRateType());
-                pst.setString(8,item.getUnitSize());
                 pst.execute();
-            }           
+            }
+            
+            // UPDATE PRODUCT QUANTITY
+            for(BillItem item: bill.getBillItems()){
+                Product prod = item.getProduct();
+                ProductController.handleProductSale(prod, item.getQuantity());
+            }
             success=true;
         }catch(Exception e){
             e.printStackTrace();
@@ -81,20 +84,17 @@ public class BillController {
                 ResultSet rs2 = pst2.executeQuery();
                 while(rs2.next()){
                     String prodId = rs2.getString(2);
-                    int quantity = rs2.getInt(3);
+                    double quantity = rs2.getInt(3);
                     int ratePerUnit = rs2.getInt(4);
                     int discount = rs2.getInt(5);
                     int total = rs2.getInt(6);
-                    String rateType = rs2.getString(7);
-                    String unitSize = rs2.getString(8);
                     Product prod = ProductController.getProduct(prodId);
                     BillItem billItem = new BillItem(prod);
                     billItem.setQuantity(quantity);
                     billItem.setDiscount(discount);
                     billItem.setRatePerUnit(ratePerUnit);
-                    billItem.setRateType(rateType);
+                    billItem.setUnitType(prod.getUnit());
                     billItem.setTotal(total);
-                    billItem.setUnitSize(unitSize);
                     billItems.add(billItem);
                 }
                 bill = new Bill(billId, date, ctm, billItems, totalBill, totalFinalBill, discountOnTotal, tax, depost);
