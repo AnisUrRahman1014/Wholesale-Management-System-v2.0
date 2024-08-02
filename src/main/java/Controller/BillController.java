@@ -143,6 +143,36 @@ public class BillController {
         return count;
     }
     
+    public static int getBillCount(Date date){
+        int count = -1;
+        try{
+            con = connect.connectDB();
+            pst = con.prepareStatement("""
+                                       SELECT COUNT(billId) AS todaysBillCount 
+                                       FROM bills 
+                                       WHERE date = ?""");
+            pst.setDate(1,date);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt("todaysBillCount"); // Get the count from the ResultSet
+                count+=1;
+            }else{
+                count=0;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+                if(con!=null){
+                    con.close();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return count;
+    }
+    
     public static boolean deleteBill(String billId, int billCredit, String ctmId){
         boolean success = false;
         try{

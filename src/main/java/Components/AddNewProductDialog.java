@@ -3,14 +3,22 @@ package Components;
 import Controller.ManagementSystemCPU;
 import Controller.ProductController;
 import Model.Product;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,6 +35,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         initComponents();
         defaultSettings();
         addTableMouseListener();
+        addTableModelListener();
         setLocationRelativeTo(null);
     }
     
@@ -50,11 +59,60 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         handleUnitChange();
         // Initialize the popup menu
         popupMenu = new JPopupMenu();
+        // Delete MenuItem
         JMenuItem deleteItem = new JMenuItem("Delete");
         deleteItem.addActionListener((ActionEvent e) -> {
-            deleteSelectedRow();
+            DeleteOptionsDialog deleteDialog = new DeleteOptionsDialog(null, true);
+            deleteDialog.setOnCloseListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    deleteSelectedRow(deleteDialog.getResponse());
+                }
+            });
+            deleteDialog.setVisible(true);
         });
         popupMenu.add(deleteItem);
+    }
+    
+    private void addTableModelListener() {
+        productsTable.getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+
+                if (column == 3 || column == 5 || column==6) { // Quantity or Discount columns or Rate Per Unit
+                    updateRowTotal(row);
+                }
+            }
+        });
+    }
+    
+    private void deleteSelectedRow(int response) {
+        int selectedRow = productsTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            DefaultTableModel model = (DefaultTableModel) productsTable.getModel();
+            String prodName = model.getValueAt(selectedRow, 2).toString();
+            boolean isDeleted = false;
+            switch(response){
+                case DeleteOptionsDialog.DISABLE_PRODUCT->{
+                    isDeleted = ProductController.disableProduct(prodName);
+                }
+                case DeleteOptionsDialog.DELETE_PRODUCT->{
+                    isDeleted = ProductController.deleteProduct(prodName);
+                }
+                case DeleteOptionsDialog.CANCEL->{
+                    
+                }
+            }
+            if (isDeleted) {
+                model.removeRow(selectedRow);
+                JOptionPane.showMessageDialog(this, "Product \"" + prodName + "\" deleted successfully", "Product deleted", JOptionPane.INFORMATION_MESSAGE);
+                defaultSettings();
+            } else {
+                JOptionPane.showMessageDialog(this, "Product \"" + prodName + "\" could not be deleted", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     private void updateTable(){
@@ -193,21 +251,6 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         });
     }
     
-    private void deleteSelectedRow() {
-        int selectedRow = productsTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            DefaultTableModel model = (DefaultTableModel) productsTable.getModel();
-            String prodName = model.getValueAt(selectedRow, 2).toString();
-            boolean isDeleted = ProductController.deleteProduct(prodName);
-            if (isDeleted) {
-                model.removeRow(selectedRow);
-                JOptionPane.showMessageDialog(this, "Product \"" + prodName + "\" deleted successfully", "Product deleted", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Product \"" + prodName + "\" could not be deleted", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-    
     private void updateSelectedProduct(){
         if(!validateFields()){
             JOptionPane.showMessageDialog(this,"Please check the fields first.","Failure",JOptionPane.ERROR_MESSAGE);
@@ -224,16 +267,43 @@ public class AddNewProductDialog extends javax.swing.JDialog {
     }
     
     private void updateCostPerPiece(){
-        int costPerPiece = 0;
-        if(!totalCostField.getText().isBlank()){
+        int totalCost = 0;
+        if(!costPerPieceField.getText().isBlank()){
             double quantity = Double.valueOf(quantityField.getText());
-            int totalCost = Integer.valueOf(totalCostField.getText());
-            double temp =(totalCost / quantity);
-            System.out.println(temp + " " + Math.round(temp));
-            costPerPiece =(int)Math.round(temp);
+            int costPerPiece = Integer.valueOf(costPerPieceField.getText());
+            double temp =(costPerPiece * quantity);
+            totalCost =(int)Math.round(temp);
         }
-        costPerPieceField.setText(String.valueOf(costPerPiece));
+        totalCostField.setText(String.valueOf(totalCost));
     }
+
+    private void updateRowTotal(int row) {
+        String prodName = productsTable.getModel().getValueAt(row, 1).toString();
+        Product prod = ProductController.getProduct(prodName);
+
+        double quantity = convertToDouble(productsTable.getModel().getValueAt(row, 3));
+        double avgCostPerUnit = convertToDouble(productsTable.getModel().getValueAt(row, 5));
+        double salePerUnit = convertToDouble(productsTable.getModel().getValueAt(row, 6));
+        double totalCost = quantity * avgCostPerUnit;
+
+        prod.setQuantity(quantity);
+        prod.setCostPerUnit(avgCostPerUnit);
+        prod.setSalePerUnit(salePerUnit);
+        prod.setTotalCost(totalCost);
+        if (ProductController.editProduct(prod)) {
+            productsTable.getModel().setValueAt(totalCost, row, 4);
+        } else {
+            ManagementSystemCPU.errorAlert(null, "Error editing product", "Cannot edit product " + prodName);
+        }        
+    }
+
+    private double convertToDouble(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        throw new IllegalArgumentException("Cannot convert value to double: " + value);
+    }
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -303,7 +373,6 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Cost / Piece");
 
-        costPerPieceField.setEditable(false);
         costPerPieceField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         costPerPieceField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -343,14 +412,14 @@ public class AddNewProductDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "S/No.", "Prod. Id", "Product", "Total Qty", "Total Cost", "Avg. C/P", "Avg. S/P", "Unit Type"
+                "S/No.", "Prod. Id", "Product", "Total Qty", "Total Cost", "Avg. C/U", "Sale / Unit", "Unit Type"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, true, false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -419,10 +488,17 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Total Cost");
 
+        totalCostField.setEditable(false);
         totalCostField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        totalCostField.setEnabled(false);
         totalCostField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 totalCostFieldFocusLost(evt);
+            }
+        });
+        totalCostField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                totalCostFieldActionPerformed(evt);
             }
         });
         totalCostField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -438,7 +514,6 @@ public class AddNewProductDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -450,25 +525,13 @@ public class AddNewProductDialog extends javax.swing.JDialog {
                                 .addComponent(jSeparator1)
                                 .addComponent(jSeparator2))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(costPerPieceField, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel10)
+                                .addGap(18, 18, 18)
+                                .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(jLabel12)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(salePerPieceField, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel16)
-                                    .addComponent(jLabel10))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(totalCostField, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
-                                    .addComponent(quantityField))
-                                .addGap(12, 12, 12)
-                                .addComponent(pieceRB)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(weightRB))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -483,8 +546,26 @@ public class AddNewProductDialog extends javax.swing.JDialog {
                                 .addComponent(updateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(confirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(12, 12, 12)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel16)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(quantityField, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(costPerPieceField, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(12, 12, 12)
+                                .addComponent(pieceRB)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(weightRB)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -515,18 +596,18 @@ public class AddNewProductDialog extends javax.swing.JDialog {
                             .addComponent(quantityField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(pieceRB)
                             .addComponent(weightRB))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(12, 12, 12)
+                            .addComponent(jLabel9)
+                            .addComponent(costPerPieceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(11, 11, 11)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9)
-                            .addComponent(costPerPieceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel12)
-                            .addComponent(salePerPieceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(salePerPieceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10)
+                            .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -585,9 +666,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
 
     private void costPerPieceFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_costPerPieceFieldFocusLost
         // TODO add your handling code here:
-        if(costPerPieceField.getText().isBlank()){
-            costPerPieceField.setText("0");
-        }
+        updateCostPerPiece();
     }//GEN-LAST:event_costPerPieceFieldFocusLost
 
     private void salePerPieceFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_salePerPieceFieldFocusLost
@@ -603,7 +682,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
 
     private void totalCostFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_totalCostFieldFocusLost
         // TODO add your handling code here:
-        updateCostPerPiece();
+        
     }//GEN-LAST:event_totalCostFieldFocusLost
 
     private void pieceRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pieceRBActionPerformed
@@ -620,6 +699,10 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
         
     }//GEN-LAST:event_totalCostFieldKeyReleased
+
+    private void totalCostFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalCostFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_totalCostFieldActionPerformed
 
     /**
      * @param args the command line arguments

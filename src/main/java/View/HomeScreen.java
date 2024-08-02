@@ -5,6 +5,7 @@ import Components.CustomerManagementScreen;
 import Components.EmployeeAttendance;
 import Components.PayrollManagementScreen;
 import Controller.ManagementSystemCPU;
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 /**
@@ -13,7 +14,7 @@ import com.formdev.flatlaf.FlatLightLaf;
  */
 public class HomeScreen extends javax.swing.JFrame {
     public HomeScreen() {
-        FlatLightLaf.setup();
+        FlatDarkLaf.setup();
         initComponents();
         tabbedContainer.add("Billing Module", new BillingMenu());
         tabbedContainer.add("Manage Customers", new CustomerManagementScreen());

@@ -66,7 +66,7 @@ public class ProductController {
         return success;
     }
     
-    public static boolean deleteProduct(String prodName){
+    public static boolean disableProduct(String prodName){
         boolean success = false;
         try{
             con = connect.connectDB();
@@ -74,6 +74,45 @@ public class ProductController {
             pst.setBoolean(1,false);
             pst.executeUpdate();
             success=true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+                if(con!=null){
+                    con.close();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
+    
+    public static boolean deleteProduct(String prodName){
+        boolean success = false;
+        try{
+            con = connect.connectDB();
+            // Start a transaction
+            con.setAutoCommit(false);
+
+            // Delete from billitems
+            PreparedStatement pst1 = con.prepareStatement("DELETE FROM billitems WHERE productID = (SELECT prodID FROM products WHERE productName = ?)");
+            pst1.setString(1, prodName);
+            pst1.executeUpdate();
+
+            // Delete from purchase_records
+            PreparedStatement pst2 = con.prepareStatement("DELETE FROM purchaseTransactions WHERE prodID = (SELECT prodID FROM products WHERE productName = ?)");
+            pst2.setString(1, prodName);
+            pst2.executeUpdate();
+
+            // Delete from products
+            PreparedStatement pst3 = con.prepareStatement("DELETE FROM products WHERE productName = ?");
+            pst3.setString(1, prodName);
+            pst3.executeUpdate();
+
+            // Commit the transaction
+            con.commit();
+            success = true;
         }catch(Exception e){
             e.printStackTrace();
         }finally{
@@ -148,14 +187,12 @@ public class ProductController {
             // CALCULATE THE AVERAGE FOR THE SALEPERPIECE, COSTPERPIECE AND TOTAL COST
             int grandTotalCost=0;
             int avgCostPerUnit=0;
-            int avgSalePerUnit=0;
             double totalQuantity=0;
             pst = con.prepareStatement("select AVG(costPerUnit) as avgCostPerUnit ,AVG(salePerUnit) as avgSalePerUnit,sum(totalCost) as totalSum from purchaseTransactions where prodId=?");
             pst.setString(1,prod.getProdID());
             rs = pst.executeQuery();
             if(rs.next()){
                 avgCostPerUnit = rs.getInt(1);
-                avgSalePerUnit = rs.getInt(2);
                 grandTotalCost = rs.getInt(3);
             }else{
                 throw new Error("Can't fetch prerequisites. | No records found to calculate average values");
@@ -176,8 +213,35 @@ public class ProductController {
             pst = con.prepareStatement("update products set quantity=?, totalCost=?, salePerPiece=?, costPerPiece=? where productName=?");
             pst.setDouble(1, totalQuantity);
             pst.setDouble(2,grandTotalCost);
-            pst.setDouble(3,avgSalePerUnit);
+            pst.setDouble(3,prod.getSalePerUnit());
             pst.setDouble(4,avgCostPerUnit);
+            pst.setString(5,prod.getProdName());
+            pst.executeUpdate();
+            success=true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+                if(con!=null){
+                    con.close();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
+    
+    public static boolean editProduct(Product prod){
+        boolean success = false;
+        try{
+            con = connect.connectDB();
+            // UPDATE THE PRODUCT USING THESE AVERAGE VALUES
+            pst = con.prepareStatement("update products set quantity=?, totalCost=?, salePerPiece=?, costPerPiece=? where productName=?");
+            pst.setDouble(1, prod.getQuantity());
+            pst.setDouble(2,prod.getTotalCost());
+            pst.setDouble(3,prod.getSalePerUnit());
+            pst.setDouble(4,prod.getCostPerUnit());
             pst.setString(5,prod.getProdName());
             pst.executeUpdate();
             success=true;

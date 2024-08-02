@@ -1,9 +1,4 @@
 package Model;
-
-import java.io.File;
-
-
-
 /**
  *
  * @author Anis Ur Rahman
@@ -79,7 +74,36 @@ public class Product {
     public boolean getStatus() {
         return status;
     }
-    
-    
-    
+
+    public void setProdID(String prodID) {
+        this.prodID = prodID;
+    }
+
+    public void setProdName(String prodName) {
+        this.prodName = prodName;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public void setSalePerUnit(double salePerUnit) {
+        this.salePerUnit = salePerUnit;
+    }
+
+    public void setCostPerUnit(double costPerUnit) {
+        this.costPerUnit = costPerUnit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }    
 }
