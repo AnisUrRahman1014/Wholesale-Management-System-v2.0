@@ -1,4 +1,4 @@
-package Components;
+package Components.CustomerManagement;
 
 import Controller.CustomerTransactionController;
 import java.awt.event.ActionEvent;

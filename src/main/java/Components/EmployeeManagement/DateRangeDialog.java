@@ -1,8 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
-package Components;
+package Components.EmployeeManagement;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,14 +8,14 @@ import java.sql.Date;
  *
  * @author M AYAN LAPTOP
  */
-public class AttendanceRangeDialog extends javax.swing.JDialog {
+public class DateRangeDialog extends javax.swing.JDialog {
     private ActionListener onCloseListener;
     private Date fromDate;
     private Date toDate;
     /**
      * Creates new form attendanceRangeDialog
      */
-    public AttendanceRangeDialog(java.awt.Frame parent, boolean modal) {
+    public DateRangeDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setTitle("Range");

@@ -1,4 +1,4 @@
-package Components;
+package Components.ProductManagment;
 
 import Controller.ManagementSystemCPU;
 import Controller.ProductController;

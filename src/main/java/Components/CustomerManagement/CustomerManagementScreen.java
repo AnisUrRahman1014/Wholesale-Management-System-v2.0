@@ -1,4 +1,4 @@
-package Components;
+package Components.CustomerManagement;
 
 import Controller.CustomerController;
 import Model.Customer;

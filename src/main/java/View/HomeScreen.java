@@ -1,9 +1,10 @@
 package View;
 
-import Components.BillingMenu;
-import Components.CustomerManagementScreen;
-import Components.EmployeeAttendance;
-import Components.PayrollManagementScreen;
+import Components.BillManagment.BillingMenu;
+import Components.CustomerManagement.CustomerManagementScreen;
+import Components.EmployeeManagement.EmployeeAttendance;
+import Components.EmployeeManagement.PayrollManagementScreen;
+import Components.ReportManagement.ReportMenu;
 import Controller.ManagementSystemCPU;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -20,6 +21,7 @@ public class HomeScreen extends javax.swing.JFrame {
         tabbedContainer.add("Manage Customers", new CustomerManagementScreen());
 //        tabbedContainer.add("Employee Attendance", new EmployeeAttendance());
 //        tabbedContainer.add("Manage Payrolls", new PayrollManagementScreen());
+        tabbedContainer.add("Report Managment",new ReportMenu());
         setMaximumSize(ManagementSystemCPU.getScreenSize());
         setTitle("Ghussia Shoppers Management System | Main Menu");   
         pack();

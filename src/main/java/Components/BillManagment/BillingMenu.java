@@ -1,5 +1,7 @@
-package Components;
+package Components.BillManagment;
 
+import Components.CustomerManagement.CustomerSelectionDialog;
+import Components.ProductManagment.AddNewProductDialog;
 import Controller.BillController;
 import Controller.ExcelInvoiceGenerator;
 import Controller.ManagementSystemCPU;
@@ -563,6 +565,7 @@ public class BillingMenu extends javax.swing.JPanel {
             }
         });
 
+        billDateChooser.setForeground(new java.awt.Color(242, 242, 242));
         billDateChooser.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 billDateChooserMouseClicked(evt);

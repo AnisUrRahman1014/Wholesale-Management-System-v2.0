@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package Components;
+package Components.EmployeeManagement;
 
+import Components.CustomerManagement.ConfirmPayDialog;
 import Controller.AttendanceController;
 import Controller.EmployeeController;
 import Controller.ManagementSystemCPU;
@@ -207,7 +208,7 @@ public class EmployeeAttendance extends javax.swing.JPanel {
     }
     
     private void rangeSelection(){
-        AttendanceRangeDialog rangeDialog = new AttendanceRangeDialog(null, true);
+        DateRangeDialog rangeDialog = new DateRangeDialog(null, true);
         rangeDialog.setOnCloseListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -193,7 +193,6 @@ public class ProductController {
             rs = pst.executeQuery();
             if(rs.next()){
                 avgCostPerUnit = rs.getInt(1);
-                grandTotalCost = rs.getInt(3);
             }else{
                 throw new Error("Can't fetch prerequisites. | No records found to calculate average values");
             }
@@ -208,7 +207,7 @@ public class ProductController {
             }else{
                 throw new Error("Can't calculate quantity");
             }
-            
+            grandTotalCost = (int)(totalQuantity*avgCostPerUnit);
             // UPDATE THE PRODUCT USING THESE AVERAGE VALUES
             pst = con.prepareStatement("update products set quantity=?, totalCost=?, salePerPiece=?, costPerPiece=? where productName=?");
             pst.setDouble(1, totalQuantity);
@@ -308,8 +307,10 @@ public class ProductController {
                 throw new Error("Error updating quantity");
             }
             updatedQty -= soldQuantity; 
-            pst = con.prepareStatement("update products set quantity = ? where productName='"+prod.getProdName()+"'");
+            int updatedTotalCost = (int)(updatedQty*prod.getCostPerUnit()); 
+            pst = con.prepareStatement("update products set quantity = ?,totalCost=? where productName='"+prod.getProdName()+"'");
             pst.setDouble(1,updatedQty);
+            pst.setInt(2, updatedTotalCost);
             pst.executeUpdate();
             success=true;
         }catch(Exception e){
