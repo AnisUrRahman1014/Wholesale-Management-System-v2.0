@@ -51,14 +51,13 @@ public class ReportMenu extends javax.swing.JPanel {
     }
     
     private void updateReportTable(){
-        try {
-            reportList = ReportController.generateReport(report);
+        try {            
             DefaultTableModel model = (DefaultTableModel) reportTable.getModel();
             model.setRowCount(0);
             int count = 0;
             for(Report r: reportList){
                 count++;
-                Object row[]={count,r.getProductName(),r.getTotalQuantitySold(),r.getAvgCostPerUnit(),r.getSoldCost(),r.getAvgSalePerUnit(),r.getTotalSale(),r.getGrossProfit()};
+                Object row[]={count,r.getProductName(),r.getTotalQuantitySold(),r.getAvgCostPerUnit(),r.getSoldCost(),r.getAvgSalePerUnit(),r.getTotalSale(),(r.getGrossProfit()*100)};
                 model.addRow(row);
             }
         } catch (Exception ex) {
@@ -75,8 +74,9 @@ public class ReportMenu extends javax.swing.JPanel {
         selectedProduct = null;
         
         //DESELECT RADIO BUTTONS
-        productRB.setSelected(false);
-        completeRB.setSelected(false);
+//        productRB.setSelected(false);
+//        completeRB.setSelected(false);
+        reportTypeRBGroup.clearSelection();
         
         // EMPTY FIELDS
         prodNameField.setText("");
@@ -199,9 +199,9 @@ public class ReportMenu extends javax.swing.JPanel {
             reportTypeField.setText(report.getReportType());
         }else{
             ManagementSystemCPU.errorAlert(null,"No product selected", "Please select a product first");
-            productRB.setSelected(false);
+            reportTypeRBGroup.clearSelection();
         }
-    }
+       }
     
     private void handleCompleteReportType(){
         reportType = Report.COMPLETE_REPORT;
@@ -213,17 +213,18 @@ public class ReportMenu extends javax.swing.JPanel {
     private void generateReport(){
         if(validateReport()){
             try {
+                reportList = ReportController.generateReport(report);
                 updateReportTable();
-                report = ReportController.getReportSummary();
-                availableCostField.setValue(report.getAvailableCost());
-                availableQuantityField.setValue(report.getAvailableQuantity());
-                avgCostPerUnitField.setValue(report.getAvgCostPerUnit());
+                Report summaryReport = ReportController.getReportSummary();
+                availableCostField.setValue(summaryReport.getAvailableCost());
+                availableQuantityField.setValue(summaryReport.getAvailableQuantity());
+                avgCostPerUnitField.setValue(summaryReport.getAvgCostPerUnit());
                 
-                soldCostField.setValue(report.getSoldCost());
-                soldQuantityField.setValue(report.getTotalQuantitySold());
-                avgSalePerUnitField.setValue(report.getAvgSalePerUnit());
-                totalSaleField.setValue(report.getTotalSale());                
-                grossProfitField.setValue(report.getGrossProfit());
+                soldCostField.setValue(summaryReport.getSoldCost());
+                soldQuantityField.setValue(summaryReport.getTotalQuantitySold());
+                avgSalePerUnitField.setValue(summaryReport.getAvgSalePerUnit());
+                totalSaleField.setValue(summaryReport.getTotalSale());                
+                grossProfitField.setValue(summaryReport.getGrossProfit());
             } catch (Exception ex) {
                 Logger.getLogger(ReportMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -745,6 +746,8 @@ public class ReportMenu extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        reportTable.setRowHeight(30);
+        reportTable.setShowGrid(true);
         jScrollPane1.setViewportView(reportTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

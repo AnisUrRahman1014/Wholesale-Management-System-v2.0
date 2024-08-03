@@ -35,21 +35,13 @@ public class ReportController {
                 switch(report.getReportRange()){
                     case ReportMenu.TODAY->{
                         // GET CURRENT INVENTORY DETAIL
-                        int totalProducts = 0;
-                        // CREATING AN ARRAYLIST AND STORING THE PRODUCTS SOLD FOR THE CURRENT DATE SO WE CAN GENERATE REPORT FOR EACH PRODUCT
-                        ArrayList<Product> billProducts = new ArrayList<>();
-                        pst = con.prepareStatement("select prodId from BillItems INNER JOIN bills ON billItems.billId = bills.billId where DATE(bills.date) = ?");
-                        pst.setDate(1,report.getReportDate());
-                        rs = pst.executeQuery();
-                        while(rs.next()){
-                            String prodId = rs.getString(1);
-                            Product prod = ProductController.getProduct(prodId);
-                            billProducts.add(prod);
-                        }
+                        // CREATING AN ARRAYLIST AND STORING THE PRODUCTS
+                        ArrayList<Product> products = ProductController.getProductList();
+
                         // ITERATING THROUGH THE PRODUCTS AND SEPERATELY GENERATING A REPORT FOR EACH PRODUCT SOLD TODAY
-                        for(Product prod: billProducts){
+                        for(Product prod: products){
                             Report tempReport = new Report(PRODUCT_REPORT);
-                            
+                            tempReport.setProductName(prod.getProdName());
                             tempReport.setAvailableQuantity(prod.getQuantity());
                             tempReport.setAvailableCost(prod.getTotalCost());
                             tempReport.setAvgCostPerUnit(prod.getCostPerUnit());
@@ -74,15 +66,122 @@ public class ReportController {
                             tempReport.calculateGrossProfit();
                             reportList.add(tempReport);
                         }
+                        
+                        //CREATE SUMMARY REPORT
+                        createSummaryReport(reportList);
                     }
                     case ReportMenu.LAST_WEEK->{
+                        // CREATING AN ARRAYLIST AND STORING THE PRODUCTS
+                        ArrayList<Product> products = ProductController.getProductList();
+
+                        // ITERATING THROUGH THE PRODUCTS AND SEPERATELY GENERATING A REPORT FOR EACH PRODUCT SOLD TODAY
+                        for(Product prod: products){
+                            Report tempReport = new Report(PRODUCT_REPORT);
+                            tempReport.setProductName(prod.getProdName());
+                            tempReport.setAvailableQuantity(prod.getQuantity());
+                            tempReport.setAvailableCost(prod.getTotalCost());
+                            tempReport.setAvgCostPerUnit(prod.getCostPerUnit());
+
+                            // Calculate total sale of this product for last 7 days
+                            pst = con.prepareStatement("SELECT SUM(quantity), AVG(ratePerUnit), SUM(total) " +
+                                "FROM billItems " +
+                                "INNER JOIN bills ON billItems.billId = bills.billId " +
+                                "WHERE billItems.productId = ? " +
+                                "AND CAST(bills.date AS DATE) >= CAST({fn TIMESTAMPADD(SQL_TSI_DAY, -7, CURRENT_TIMESTAMP)} AS DATE) " +
+                                "AND CAST(bills.date AS DATE) < CAST({fn TIMESTAMPADD(SQL_TSI_DAY, 1, CURRENT_TIMESTAMP)} AS DATE)");
+                            pst.setString(1,prod.getProdID());
+                            rs = pst.executeQuery();
+                            if (rs.next()) {
+                                totalQuantitySold = rs.getDouble(1);
+                                avgSalePerUnit = rs.getDouble(2);
+                                totalSale = rs.getDouble(3);
+                                tempReport.setTotalQuantitySold(totalQuantitySold);
+                                tempReport.setAvgSalePerUnit(avgSalePerUnit);
+                                tempReport.setTotalSale(totalSale);
+                            }
+                            tempReport.calculateSoldCost();
+                            tempReport.calculateGrossProfit();
+                            reportList.add(tempReport);
+                        }
                         
+                        //CREATE SUMMARY REPORT
+                        createSummaryReport(reportList);
                     }
                     case ReportMenu.LAST_MONTH->{
+                        // CREATING AN ARRAYLIST AND STORING THE PRODUCTS
+                        ArrayList<Product> products = ProductController.getProductList();
+
+                        // ITERATING THROUGH THE PRODUCTS AND SEPERATELY GENERATING A REPORT FOR EACH PRODUCT SOLD TODAY
+                        for(Product prod: products){
+                            Report tempReport = new Report(PRODUCT_REPORT);
+                            tempReport.setProductName(prod.getProdName());
+                            tempReport.setAvailableQuantity(prod.getQuantity());
+                            tempReport.setAvailableCost(prod.getTotalCost());
+                            tempReport.setAvgCostPerUnit(prod.getCostPerUnit());
+
+                            // Calculate total sale of this product for last 30 days
+                            pst = con.prepareStatement("SELECT SUM(quantity), AVG(ratePerUnit), SUM(total) " +
+                                "FROM billItems " +
+                                "INNER JOIN bills ON billItems.billId = bills.billId " +
+                                "WHERE billItems.productId = ? " +
+                                "AND CAST(bills.date AS DATE) >= CAST({fn TIMESTAMPADD(SQL_TSI_MONTH, -1, CURRENT_TIMESTAMP)} AS DATE) " +
+                                "AND CAST(bills.date AS DATE) < CAST({fn TIMESTAMPADD(SQL_TSI_MONTH, 1, CURRENT_TIMESTAMP)} AS DATE)");
+                            pst.setString(1,prod.getProdID());
+                            rs = pst.executeQuery();
+                            if (rs.next()) {
+                                totalQuantitySold = rs.getDouble(1);
+                                avgSalePerUnit = rs.getDouble(2);
+                                totalSale = rs.getDouble(3);
+                                tempReport.setTotalQuantitySold(totalQuantitySold);
+                                tempReport.setAvgSalePerUnit(avgSalePerUnit);
+                                tempReport.setTotalSale(totalSale);
+                            }
+                            tempReport.calculateSoldCost();
+                            tempReport.calculateGrossProfit();
+                            reportList.add(tempReport);
+                        }
                         
+                        //CREATE SUMMARY REPORT
+                        createSummaryReport(reportList);
                     }
                     case ReportMenu.RANGE->{
+                        // CREATING AN ARRAYLIST AND STORING THE PRODUCTS
+                        ArrayList<Product> products = ProductController.getProductList();
+
+                        // ITERATING THROUGH THE PRODUCTS AND SEPERATELY GENERATING A REPORT FOR EACH PRODUCT SOLD TODAY
+                        for(Product prod: products){
+                            Report tempReport = new Report(PRODUCT_REPORT);
+                            tempReport.setProductName(prod.getProdName());
+                            tempReport.setAvailableQuantity(prod.getQuantity());
+                            tempReport.setAvailableCost(prod.getTotalCost());
+                            tempReport.setAvgCostPerUnit(prod.getCostPerUnit());
+
+                            // Calculate total sale of this product for last 30 days
+                            pst = con.prepareStatement("SELECT SUM(quantity), AVG(ratePerUnit), SUM(total) " +
+                                "FROM billItems " +
+                                "INNER JOIN bills ON billItems.billId = bills.billId " +
+                                "WHERE billItems.productId = ? " +
+                                "AND CAST(bills.date AS DATE) >= ? " +
+                                "AND CAST(bills.date AS DATE) < ?");
+                            pst.setString(1, prod.getProdID());
+                            pst.setDate(2, report.getFromDate());
+                            pst.setDate(3, report.getToDate());
+                            rs = pst.executeQuery();
+                            if (rs.next()) {
+                                totalQuantitySold = rs.getDouble(1);
+                                avgSalePerUnit = rs.getDouble(2);
+                                totalSale = rs.getDouble(3);
+                                tempReport.setTotalQuantitySold(totalQuantitySold);
+                                tempReport.setAvgSalePerUnit(avgSalePerUnit);
+                                tempReport.setTotalSale(totalSale);
+                            }
+                            tempReport.calculateSoldCost();
+                            tempReport.calculateGrossProfit();
+                            reportList.add(tempReport);
+                        }
                         
+                        //CREATE SUMMARY REPORT
+                        createSummaryReport(reportList);
                     }
                     case ReportMenu.NO_RANGE_SELECTED->{
                         throw new Exception("No range selected");
@@ -215,5 +314,40 @@ public class ReportController {
             }
         }
         return reportList;
+    }
+    
+    private static void createSummaryReport(ArrayList<Report> reportList){
+        if(reportList != null && !reportList.isEmpty()){
+            double totalAvailableQuantity = 0;
+            double totalAvailableCost = 0;
+//            double totalQuantitySold = 0;
+            double totalSoldCost = 0;
+            double totalSale = 0;
+            int productCountWithSales = 0;
+            
+            for(Report report : reportList){
+                totalAvailableQuantity += report.getAvailableQuantity();
+                totalAvailableCost += report.getAvailableCost();
+                
+                if(report.getTotalQuantitySold() > 0){
+                    productCountWithSales++;
+//                    totalQuantitySold += report.getTotalQuantitySold();
+                    totalSoldCost += report.getSoldCost();
+                    totalSale += report.getTotalSale();
+                }
+            }
+            
+            summaryReport = new Report(COMPLETE_REPORT);
+            summaryReport.setAvailableQuantity(totalAvailableQuantity);
+            summaryReport.setAvailableCost(totalAvailableCost);
+            summaryReport.setAvgCostPerUnit(Double.NaN); // Set to NaN
+            
+            summaryReport.setTotalQuantitySold(productCountWithSales); // Count of products with sales
+            summaryReport.setSoldCost(totalSoldCost);
+            summaryReport.setTotalSale(totalSale);
+            summaryReport.setAvgSalePerUnit(Double.NaN); // Set to NaN
+            
+            summaryReport.calculateGrossProfit();
+        }
     }
 }

@@ -1,14 +1,13 @@
-Sat Aug 03 15:15:16 PKT 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Sat Aug 03 15:15:17 PKT 2024:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0191-17bc-860b-00001f580660 
+Sat Aug 03 16:24:46 PKT 2024:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0191-17fc-2684-000012d62f10 
 on database directory F:\NetBeansProjects\wholsalemanagementsystem(mamoHassan)\WholesaleMS with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
-Loaded from file:/F:/Java%20Files/db-derby-10.14.2.0-bin/db-derby-10.14.2.0-bin/lib/derby.jar
+Loaded from file:/C:/Users/M%20AYAN%20LAPTOP/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
 java.vendor=Oracle Corporation
 java.runtime.version=16.0.2+7-67
-user.dir=F:\Java Files\db-derby-10.14.2.0-bin\db-derby-10.14.2.0-bin
+user.dir=F:\NetBeansProjects\wholsalemanagementsystem(mamoHassan)
 os.name=Windows 10
 os.arch=amd64
 os.version=10.0
-derby.system.home=F:\NetBeansProjects\wholsalemanagementsystem(mamoHassan)
+derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
