@@ -19,7 +19,7 @@ public class DeleteOptionsDialog extends javax.swing.JDialog {
     public DeleteOptionsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setLocationRelativeTo(null);
+        setTitle("Delete Product");
     }
     
     public int getResponse(){
@@ -56,9 +56,8 @@ public class DeleteOptionsDialog extends javax.swing.JDialog {
         cancelBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Delete Product");
         setAlwaysOnTop(true);
-        setResizable(false);
+        setModal(true);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Disable Product: The sale and purchase records stay intact, only the product is disabled");
@@ -142,8 +141,7 @@ public class DeleteOptionsDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(7, 7, 7))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();

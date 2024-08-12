@@ -1,6 +1,7 @@
 package Components.ReportManagement;
 
 import Components.EmployeeManagement.DateRangeDialog;
+import Controller.ExcelFileGenerator;
 import Controller.ManagementSystemCPU;
 import Controller.ReportController;
 import java.awt.event.ActionEvent;
@@ -89,6 +90,8 @@ public class ReportMenu extends javax.swing.JPanel {
         soldCostField.setText("");
         grossProfitField.setText("");
         soldQuantityField.setText("");
+        
+        saveExcelBtn.setEnabled(false);
     }
     
     private void allowRangeButtons(boolean flag){
@@ -225,6 +228,7 @@ public class ReportMenu extends javax.swing.JPanel {
                 avgSalePerUnitField.setValue(summaryReport.getAvgSalePerUnit());
                 totalSaleField.setValue(summaryReport.getTotalSale());                
                 grossProfitField.setValue(summaryReport.getGrossProfit());
+                saveExcelBtn.setEnabled(true);
             } catch (Exception ex) {
                 Logger.getLogger(ReportMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -232,6 +236,15 @@ public class ReportMenu extends javax.swing.JPanel {
             ManagementSystemCPU.errorAlert(null,"Error generating report", "Cannot find a report instance.");
         }
     }
+    
+    private void saveExcel(){
+        if(ExcelFileGenerator.generateExcel(report, reportList)){
+            ManagementSystemCPU.informationAlert(null,"Report saved", "Report saved successfully");
+        }else{
+            System.out.println("BERA GHRK");
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -279,7 +292,7 @@ public class ReportMenu extends javax.swing.JPanel {
         grossProfitField = new javax.swing.JFormattedTextField();
         avgSalePerUnitField = new javax.swing.JFormattedTextField();
         avgCostPerUnitField = new javax.swing.JFormattedTextField();
-        generateBtn1 = new javax.swing.JButton();
+        saveExcelBtn = new javax.swing.JButton();
         jSeparator7 = new javax.swing.JSeparator();
         jSeparator8 = new javax.swing.JSeparator();
         jLabel22 = new javax.swing.JLabel();
@@ -558,7 +571,12 @@ public class ReportMenu extends javax.swing.JPanel {
             }
         });
 
-        generateBtn1.setText("Save PDF");
+        saveExcelBtn.setText("Save Excel");
+        saveExcelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveExcelBtnActionPerformed(evt);
+            }
+        });
 
         jLabel22.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel22.setText("Total Cost");
@@ -596,7 +614,7 @@ public class ReportMenu extends javax.swing.JPanel {
                         .addGap(426, 426, 426))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(generateBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(saveExcelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(124, 124, 124))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -699,7 +717,7 @@ public class ReportMenu extends javax.swing.JPanel {
                 .addGap(3, 3, 3)
                 .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
-                .addComponent(generateBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(saveExcelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1008,6 +1026,11 @@ public class ReportMenu extends javax.swing.JPanel {
         defaultSettings();
     }//GEN-LAST:event_clearBtnActionPerformed
 
+    private void saveExcelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveExcelBtnActionPerformed
+        // TODO add your handling code here:
+        saveExcel();
+    }//GEN-LAST:event_saveExcelBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField availableCostField;
@@ -1019,7 +1042,6 @@ public class ReportMenu extends javax.swing.JPanel {
     private javax.swing.JCheckBox customRangeCB;
     private javax.swing.JFormattedTextField fromDateField;
     private javax.swing.JButton generateBtn;
-    private javax.swing.JButton generateBtn1;
     private javax.swing.JFormattedTextField grossProfitField;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1052,6 +1074,7 @@ public class ReportMenu extends javax.swing.JPanel {
     private javax.swing.JTable reportTable;
     private javax.swing.JFormattedTextField reportTypeField;
     private javax.swing.ButtonGroup reportTypeRBGroup;
+    private javax.swing.JButton saveExcelBtn;
     private javax.swing.JFormattedTextField soldCostField;
     private javax.swing.JFormattedTextField soldQuantityField;
     private javax.swing.JFormattedTextField toDateField;

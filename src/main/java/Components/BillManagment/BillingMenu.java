@@ -3,7 +3,7 @@ package Components.BillManagment;
 import Components.CustomerManagement.CustomerSelectionDialog;
 import Components.ProductManagment.AddNewProductDialog;
 import Controller.BillController;
-import Controller.ExcelInvoiceGenerator;
+import Controller.ExcelFileGenerator;
 import Controller.ManagementSystemCPU;
 import Controller.PrintInvoice;
 import Controller.ProductController;
@@ -460,11 +460,11 @@ public class BillingMenu extends javax.swing.JPanel {
             Integer.valueOf(depositField.getText())                
         );
 //        PrintInvoice.printExcelSheet(currentBill);
-        boolean success = BillController.recordBill(currentBill) && ExcelInvoiceGenerator.generateExcel(currentBill);
+        boolean success = BillController.recordBill(currentBill) && ExcelFileGenerator.generateExcel(currentBill);
         if(!success){
             ManagementSystemCPU.errorAlert(this,"Printing error","Failed to print the bill");
         }else{
-            ExcelInvoiceGenerator.generateExcel(currentBill);
+            ExcelFileGenerator.generateExcel(currentBill);
             ManagementSystemCPU.informationAlert(this,"Bill saved","Bill was successfully saved");
             defaultSettings();
         }

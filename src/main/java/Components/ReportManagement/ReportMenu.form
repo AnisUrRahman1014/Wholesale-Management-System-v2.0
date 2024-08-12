@@ -254,7 +254,7 @@
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          <Component id="generateBtn1" min="-2" pref="105" max="-2" attributes="0"/>
+                          <Component id="saveExcelBtn" min="-2" pref="105" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
@@ -388,7 +388,7 @@
                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                   <Component id="jSeparator8" min="-2" pref="10" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Component id="generateBtn1" min="-2" pref="32" max="-2" attributes="0"/>
+                  <Component id="saveExcelBtn" min="-2" pref="32" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -606,10 +606,13 @@
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="avgCostPerUnitFieldKeyReleased"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="generateBtn1">
+        <Component class="javax.swing.JButton" name="saveExcelBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Save PDF"/>
+            <Property name="text" type="java.lang.String" value="Save Excel"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveExcelBtnActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator7">
         </Component>
