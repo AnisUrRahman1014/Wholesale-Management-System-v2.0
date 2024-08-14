@@ -326,4 +326,30 @@ public class ProductController {
         }
         return success;
     }
+    
+    public static int getTotalStockAmount(){
+        int  totalStockAmount = 0;
+        try{
+            con = connect.connectDB();
+            // GET TOTAL QUANTITY
+            pst = con.prepareStatement("select sum(totalCost) from products");
+            rs = pst.executeQuery();
+            if(rs.next()){
+                totalStockAmount = (int)rs.getDouble(1);
+            }else{
+                throw new Error("Error getting total stock");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+                if(con!=null){
+                    con.close();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return totalStockAmount;
+    }
 }

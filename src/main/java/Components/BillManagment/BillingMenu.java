@@ -202,6 +202,12 @@ public class BillingMenu extends javax.swing.JPanel {
             Object row[]={++count,prod.getProdID(), prod.getProdName(),prod.getQuantity(),prod.getCostPerUnit(),prod.getSalePerUnit()};
             model.addRow(row);
         }
+        updateTotalStockField();
+    }
+    
+    private void updateTotalStockField(){
+        int totalStock = ProductController.getTotalStockAmount();
+        totalStockField.setValue(totalStock);
     }
     
     private void updateCurrentItem() throws Exception{   
@@ -243,7 +249,23 @@ public class BillingMenu extends javax.swing.JPanel {
                 ManagementSystemCPU.errorAlert(null, "Invalid quantity", "Please enter a valid quantity");
                 return;
             }
-            currentItem.setRatePerUnit(Integer.valueOf(rate));
+            int r = Integer.valueOf(rate);
+            double quantity = Double.valueOf(quantityField.getText());
+            int totalSale =(int)Math.round((double)(r * quantity));
+            totalSaleField.setValue(totalSale);
+            currentItem.setRatePerUnit(r);
+        }else{
+            JOptionPane.showMessageDialog(this,"No product selected. Please choose a product first","Error",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void updateTotalSaleField(){
+        if(currentItem!=null){            
+            double quantity = Double.valueOf(quantityField.getText());
+            int totalSale =Integer.valueOf(totalSaleField.getText());
+            int r = (int) Math.round(totalSale / quantity);
+            ratePerUnitField.setValue(r);
+            currentItem.setRatePerUnit(r);            
         }else{
             JOptionPane.showMessageDialog(this,"No product selected. Please choose a product first","Error",JOptionPane.ERROR_MESSAGE);
         }
@@ -471,6 +493,7 @@ public class BillingMenu extends javax.swing.JPanel {
     }
    
     
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -490,6 +513,8 @@ public class BillingMenu extends javax.swing.JPanel {
         jLabel19 = new javax.swing.JLabel();
         taxField = new javax.swing.JFormattedTextField();
         billDateChooser = new com.toedter.calendar.JDateChooser();
+        totalStockField = new javax.swing.JFormattedTextField();
+        jLabel25 = new javax.swing.JLabel();
         ContentPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         billTable = new javax.swing.JTable();
@@ -517,6 +542,8 @@ public class BillingMenu extends javax.swing.JPanel {
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         ratePerUnitField = new javax.swing.JFormattedTextField();
+        jLabel24 = new javax.swing.JLabel();
+        totalSaleField = new javax.swing.JFormattedTextField();
         customerDetailsPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         productTable = new javax.swing.JTable();
@@ -577,6 +604,19 @@ public class BillingMenu extends javax.swing.JPanel {
             }
         });
 
+        totalStockField.setEditable(false);
+        totalStockField.setForeground(new java.awt.Color(51, 255, 0));
+        totalStockField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        totalStockField.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        totalStockField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                totalStockFieldFocusLost(evt);
+            }
+        });
+
+        jLabel25.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel25.setText("Total Stock:");
+
         javax.swing.GroupLayout headerPanelLayout = new javax.swing.GroupLayout(headerPanel);
         headerPanel.setLayout(headerPanelLayout);
         headerPanelLayout.setHorizontalGroup(
@@ -591,6 +631,10 @@ public class BillingMenu extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(billDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel25)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(totalStockField, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel19)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(taxField, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -604,7 +648,10 @@ public class BillingMenu extends javax.swing.JPanel {
                         .addContainerGap()
                         .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(taxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel19)))
+                            .addComponent(jLabel19)
+                            .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(totalStockField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel25))))
                     .addGroup(headerPanelLayout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -613,7 +660,7 @@ public class BillingMenu extends javax.swing.JPanel {
                                 .addComponent(jLabel2)
                                 .addComponent(billIdField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel3)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         billTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -792,6 +839,26 @@ public class BillingMenu extends javax.swing.JPanel {
             }
         });
 
+        jLabel24.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel24.setText("Total");
+
+        totalSaleField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        totalSaleField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                totalSaleFieldFocusLost(evt);
+            }
+        });
+        totalSaleField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                totalSaleFieldActionPerformed(evt);
+            }
+        });
+        totalSaleField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                totalSaleFieldKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout billingDetailsPanelLayout = new javax.swing.GroupLayout(billingDetailsPanel);
         billingDetailsPanel.setLayout(billingDetailsPanelLayout);
         billingDetailsPanelLayout.setHorizontalGroup(
@@ -813,7 +880,7 @@ public class BillingMenu extends javax.swing.JPanel {
                                 .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, billingDetailsPanelLayout.createSequentialGroup()
                                     .addGap(29, 29, 29)
-                                    .addGroup(billingDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(billingDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(billingDetailsPanelLayout.createSequentialGroup()
                                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(18, 18, 18)
@@ -845,7 +912,11 @@ public class BillingMenu extends javax.swing.JPanel {
                                         .addGroup(billingDetailsPanelLayout.createSequentialGroup()
                                             .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(18, 18, 18)
-                                            .addComponent(ratePerUnitField, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                            .addComponent(ratePerUnitField, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabel24)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(totalSaleField, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addNewProductBtn)))
                 .addContainerGap(39, Short.MAX_VALUE))
@@ -876,7 +947,9 @@ public class BillingMenu extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(billingDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel23)
-                    .addComponent(ratePerUnitField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ratePerUnitField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel24)
+                    .addComponent(totalSaleField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(billingDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
@@ -1418,6 +1491,7 @@ public class BillingMenu extends javax.swing.JPanel {
 
     private void ratePerUnitFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ratePerUnitFieldFocusLost
         // TODO add your handling code here:
+        updateRate(ratePerUnitField.getText());
     }//GEN-LAST:event_ratePerUnitFieldFocusLost
 
     private void ratePerUnitFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ratePerUnitFieldActionPerformed
@@ -1437,6 +1511,25 @@ public class BillingMenu extends javax.swing.JPanel {
         // TODO add your handling code here:
         updateDate();
     }//GEN-LAST:event_billDateChooserPropertyChange
+
+    private void totalSaleFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_totalSaleFieldFocusLost
+        // TODO add your handling code here:
+        if(!totalSaleField.getText().isBlank()){
+            updateTotalSaleField();
+        }
+    }//GEN-LAST:event_totalSaleFieldFocusLost
+
+    private void totalSaleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalSaleFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_totalSaleFieldActionPerformed
+
+    private void totalSaleFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_totalSaleFieldKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_totalSaleFieldKeyReleased
+
+    private void totalStockFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_totalStockFieldFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_totalStockFieldFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1471,6 +1564,8 @@ public class BillingMenu extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
@@ -1497,6 +1592,8 @@ public class BillingMenu extends javax.swing.JPanel {
     private javax.swing.JFormattedTextField taxField;
     private javax.swing.JTextField totalBillField;
     private javax.swing.JTextField totalDiscountField;
+    private javax.swing.JFormattedTextField totalSaleField;
+    private javax.swing.JFormattedTextField totalStockField;
     private javax.swing.ButtonGroup unitSizeBtnGroup;
     private javax.swing.ButtonGroup unitTypeBtnGroup;
     private javax.swing.JRadioButton weightRB;
