@@ -17,9 +17,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.RowFilter;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -304,6 +306,22 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         throw new IllegalArgumentException("Cannot convert value to double: " + value);
     }
 
+    private void filterProductTable() {
+        String input = prodSearchField.getText().trim().toLowerCase();
+        DefaultTableModel model = (DefaultTableModel) productsTable.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        productsTable.setRowSorter(sorter);
+
+        RowFilter<DefaultTableModel, Object> rf = new RowFilter<DefaultTableModel, Object>() {
+            @Override
+            public boolean include(RowFilter.Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                String prodId = entry.getStringValue(1).toLowerCase();
+                String prodName = entry.getStringValue(2).toLowerCase();
+                return prodId.contains(input) || prodName.contains(input);
+            }
+        };
+        sorter.setRowFilter(rf);
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -341,6 +359,8 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         weightRB = new javax.swing.JRadioButton();
         jLabel10 = new javax.swing.JLabel();
         totalCostField = new javax.swing.JFormattedTextField();
+        prodSearchField = new javax.swing.JTextField();
+        clearProductFilterBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Provide details of the new product");
@@ -507,6 +527,24 @@ public class AddNewProductDialog extends javax.swing.JDialog {
             }
         });
 
+        prodSearchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prodSearchFieldActionPerformed(evt);
+            }
+        });
+        prodSearchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                prodSearchFieldKeyReleased(evt);
+            }
+        });
+
+        clearProductFilterBtn.setText("X");
+        clearProductFilterBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearProductFilterBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -546,7 +584,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
                                 .addComponent(updateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(confirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -565,22 +603,26 @@ public class AddNewProductDialog extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(weightRB)
                                 .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(prodSearchField)
+                        .addGap(18, 18, 18)
+                        .addComponent(clearProductFilterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(prodSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearProductFilterBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(clearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -616,8 +658,8 @@ public class AddNewProductDialog extends javax.swing.JDialog {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(confirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(updateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(46, 46, 46)))
+                            .addComponent(updateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -704,6 +746,21 @@ public class AddNewProductDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_totalCostFieldActionPerformed
 
+    private void prodSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prodSearchFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prodSearchFieldActionPerformed
+
+    private void prodSearchFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_prodSearchFieldKeyReleased
+        // TODO add your handling code here:
+        filterProductTable();
+    }//GEN-LAST:event_prodSearchFieldKeyReleased
+
+    private void clearProductFilterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearProductFilterBtnActionPerformed
+        // TODO add your handling code here:
+        prodSearchField.setText("");
+        filterProductTable();
+    }//GEN-LAST:event_clearProductFilterBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -750,6 +807,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelBtn;
     private javax.swing.JButton clearBtn;
+    private javax.swing.JButton clearProductFilterBtn;
     private javax.swing.JButton confirmBtn;
     private javax.swing.JFormattedTextField costPerPieceField;
     private javax.swing.JLabel jLabel1;
@@ -768,6 +826,7 @@ public class AddNewProductDialog extends javax.swing.JDialog {
     private javax.swing.JRadioButton pieceRB;
     private javax.swing.JTextField prodIdField;
     private javax.swing.JTextField prodNameField;
+    private javax.swing.JTextField prodSearchField;
     private javax.swing.JTable productsTable;
     private javax.swing.JFormattedTextField quantityField;
     private javax.swing.JFormattedTextField salePerPieceField;

@@ -46,7 +46,7 @@ public class BillingMenu extends javax.swing.JPanel {
     Date currentDate;
     ArrayList<Product> products;
     BillItem currentItem = null;
-    int totalBill;
+    int totalBill = 0;
     Customer selectedCustomer = null;
     Product selectedProduct = null;
     Bill currentBill = null;
@@ -86,12 +86,14 @@ public class BillingMenu extends javax.swing.JPanel {
         creditField.setText("");
         currentBill = null;
         selectedCustomer = new Customer("Ghusia","","");
+        selectedCtmLabel.setText(selectedCustomer.getName());
         quantityField.setText("1");
         ratePerUnitField.setText("0");
         updateBillId();
         updateTaxField();
         updateProductTable();
         emptyBillTable();
+        resetFields();
     }
     
     private void updateDate(){
@@ -216,7 +218,7 @@ public class BillingMenu extends javax.swing.JPanel {
         }
         try{
             if(quantityField.getText().isBlank()){
-                quantityField.setText("1");
+                quantityField.setValue(1);
                 updateQuantity(quantityField.getText());
             }else{
                 updateQuantity(quantityField.getText());
@@ -249,11 +251,13 @@ public class BillingMenu extends javax.swing.JPanel {
                 ManagementSystemCPU.errorAlert(null, "Invalid quantity", "Please enter a valid quantity");
                 return;
             }
-            int r = Integer.valueOf(rate);
+            double r = Double.valueOf(rate);
             double quantity = Double.valueOf(quantityField.getText());
-            int totalSale =(int)Math.round((double)(r * quantity));
+            int totalSale =(int)((double)(r * quantity));
             totalSaleField.setValue(totalSale);
             currentItem.setRatePerUnit(r);
+            currentItem.setTotal(totalSale);
+            System.out.println("Updated Rate: "+r);
         }else{
             JOptionPane.showMessageDialog(this,"No product selected. Please choose a product first","Error",JOptionPane.ERROR_MESSAGE);
         }
@@ -263,7 +267,7 @@ public class BillingMenu extends javax.swing.JPanel {
         if(currentItem!=null){            
             double quantity = Double.valueOf(quantityField.getText());
             int totalSale =Integer.valueOf(totalSaleField.getText());
-            int r = (int) Math.round(totalSale / quantity);
+            double r = totalSale / quantity;
             ratePerUnitField.setValue(r);
             currentItem.setRatePerUnit(r);            
         }else{
@@ -424,7 +428,7 @@ public class BillingMenu extends javax.swing.JPanel {
         selectedProduct = ProductController.getProduct(prodId);
         prodIDField.setText(selectedProduct.getProdID());
         prodNameField.setText(selectedProduct.getProdName());
-        ratePerUnitField.setText(String.valueOf((int)selectedProduct.getSalePerUnit()));
+        ratePerUnitField.setValue(selectedProduct.getSalePerUnit());
         if(selectedProduct.getUnit().equals(ManagementSystemCPU.PIECE)){
             pieceRB.setSelected(true);
             weightRB.setSelected(false);
@@ -435,7 +439,7 @@ public class BillingMenu extends javax.swing.JPanel {
         handleQuantityFormatUpdate();
         quantityField.setText("1");
         currentItem =  new BillItem(selectedProduct);
-        currentItem.setRatePerUnit((int)Math.round(selectedProduct.getSalePerUnit()));
+        currentItem.setRatePerUnit(selectedProduct.getSalePerUnit());
         currentItem.setUnitType(selectedProduct.getUnit());
     }
     
@@ -605,7 +609,7 @@ public class BillingMenu extends javax.swing.JPanel {
         });
 
         totalStockField.setEditable(false);
-        totalStockField.setForeground(new java.awt.Color(51, 255, 0));
+        totalStockField.setForeground(new java.awt.Color(255, 0, 51));
         totalStockField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
         totalStockField.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         totalStockField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -823,7 +827,7 @@ public class BillingMenu extends javax.swing.JPanel {
         jLabel23.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel23.setText("Rate / Unit");
 
-        ratePerUnitField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        ratePerUnitField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
         ratePerUnitField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 ratePerUnitFieldFocusLost(evt);
@@ -1465,9 +1469,10 @@ public class BillingMenu extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectedCustomer = dialog.getSelectedCustomer();
+                selectedCtmLabel.setText(selectedCustomer.getName());
             }
         });
-        System.out.println(selectedCustomer.getName());
+        
         dialog.setVisible(true);
     }//GEN-LAST:event_selectCtmBtnActionPerformed
 

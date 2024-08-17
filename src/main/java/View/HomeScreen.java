@@ -6,7 +6,6 @@ import Components.EmployeeManagement.EmployeeAttendance;
 import Components.EmployeeManagement.PayrollManagementScreen;
 import Components.ReportManagement.ReportMenu;
 import Controller.ManagementSystemCPU;
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 /**
@@ -15,12 +14,12 @@ import com.formdev.flatlaf.FlatLightLaf;
  */
 public class HomeScreen extends javax.swing.JFrame {
     public HomeScreen() {
-        FlatDarkLaf.setup();
+        FlatLightLaf.setup();
         initComponents();
         tabbedContainer.add("Billing Module", new BillingMenu());
         tabbedContainer.add("Manage Customers", new CustomerManagementScreen());
-        tabbedContainer.add("Employee Attendance", new EmployeeAttendance());
-        tabbedContainer.add("Manage Payrolls", new PayrollManagementScreen());
+//        tabbedContainer.add("Employee Attendance", new EmployeeAttendance());
+//        tabbedContainer.add("Manage Payrolls", new PayrollManagementScreen());
         tabbedContainer.add("Report Managment",new ReportMenu());
         setMaximumSize(ManagementSystemCPU.getScreenSize());
         setTitle("Ghussia Shoppers Management System | Main Menu");   

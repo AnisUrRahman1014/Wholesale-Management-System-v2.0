@@ -179,7 +179,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="ff" red="33" type="rgb"/>
+              <Color blue="33" green="0" red="ff" type="rgb"/>
             </Property>
             <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
               <Format format="#,##0" subtype="-1" type="0"/>
@@ -632,7 +632,7 @@
             <Component class="javax.swing.JFormattedTextField" name="ratePerUnitField">
               <Properties>
                 <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-                  <Format format="#0" subtype="-1" type="0"/>
+                  <Format format="#0.00" subtype="-1" type="0"/>
                 </Property>
               </Properties>
               <Events>

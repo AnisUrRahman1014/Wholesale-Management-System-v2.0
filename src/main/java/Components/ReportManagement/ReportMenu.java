@@ -12,7 +12,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 /**
  *
  * @author Anis Ur Rahman
@@ -245,6 +247,23 @@ public class ReportMenu extends javax.swing.JPanel {
         }
     }
     
+    private void filterProductTable() {
+        String input = prodSearchField.getText().trim().toLowerCase();
+        DefaultTableModel model = (DefaultTableModel) reportTable.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        reportTable.setRowSorter(sorter);
+
+        RowFilter<DefaultTableModel, Object> rf = new RowFilter<DefaultTableModel, Object>() {
+            @Override
+            public boolean include(RowFilter.Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                String prodId = entry.getStringValue(1).toLowerCase();
+                String prodName = entry.getStringValue(2).toLowerCase();
+                return prodId.contains(input) || prodName.contains(input);
+            }
+        };
+        sorter.setRowFilter(rf);
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -302,6 +321,8 @@ public class ReportMenu extends javax.swing.JPanel {
         toDateField = new javax.swing.JFormattedTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         reportTable = new javax.swing.JTable();
+        prodSearchField = new javax.swing.JTextField();
+        clearProductFilterBtn = new javax.swing.JButton();
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Choose:");
@@ -768,6 +789,24 @@ public class ReportMenu extends javax.swing.JPanel {
         reportTable.setShowGrid(true);
         jScrollPane1.setViewportView(reportTable);
 
+        prodSearchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prodSearchFieldActionPerformed(evt);
+            }
+        });
+        prodSearchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                prodSearchFieldKeyReleased(evt);
+            }
+        });
+
+        clearProductFilterBtn.setText("X");
+        clearProductFilterBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearProductFilterBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -775,6 +814,7 @@ public class ReportMenu extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -785,7 +825,6 @@ public class ReportMenu extends javax.swing.JPanel {
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(toDateField, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -809,19 +848,26 @@ public class ReportMenu extends javax.swing.JPanel {
                             .addComponent(lastWeekBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 136, Short.MAX_VALUE)
                             .addComponent(todayBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(prodSearchField)
+                        .addGap(18, 18, 18)
+                        .addComponent(clearProductFilterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(prodSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearProductFilterBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -855,7 +901,8 @@ public class ReportMenu extends javax.swing.JPanel {
                             .addComponent(generateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(clearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1031,6 +1078,21 @@ public class ReportMenu extends javax.swing.JPanel {
         saveExcel();
     }//GEN-LAST:event_saveExcelBtnActionPerformed
 
+    private void prodSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prodSearchFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prodSearchFieldActionPerformed
+
+    private void prodSearchFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_prodSearchFieldKeyReleased
+        // TODO add your handling code here:
+        filterProductTable();
+    }//GEN-LAST:event_prodSearchFieldKeyReleased
+
+    private void clearProductFilterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearProductFilterBtnActionPerformed
+        // TODO add your handling code here:
+        prodSearchField.setText("");
+        filterProductTable();
+    }//GEN-LAST:event_clearProductFilterBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField availableCostField;
@@ -1038,6 +1100,7 @@ public class ReportMenu extends javax.swing.JPanel {
     private javax.swing.JFormattedTextField avgCostPerUnitField;
     private javax.swing.JFormattedTextField avgSalePerUnitField;
     private javax.swing.JButton clearBtn;
+    private javax.swing.JButton clearProductFilterBtn;
     private javax.swing.JRadioButton completeRB;
     private javax.swing.JCheckBox customRangeCB;
     private javax.swing.JFormattedTextField fromDateField;
@@ -1070,6 +1133,7 @@ public class ReportMenu extends javax.swing.JPanel {
     private javax.swing.JButton lastMonthBtn;
     private javax.swing.JButton lastWeekBtn;
     private javax.swing.JFormattedTextField prodNameField;
+    private javax.swing.JTextField prodSearchField;
     private javax.swing.JRadioButton productRB;
     private javax.swing.JTable reportTable;
     private javax.swing.JFormattedTextField reportTypeField;

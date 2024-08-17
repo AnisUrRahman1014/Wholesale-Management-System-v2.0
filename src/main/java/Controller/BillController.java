@@ -40,9 +40,11 @@ public class BillController {
                 pst.setString(1, bill.getBillId());
                 pst.setString(2, item.getProduct().getProdID());
                 pst.setDouble(3,item.getQuantity());
-                pst.setInt(4,item.getRatePerUnit());
-                pst.setInt(5,item.getDiscount());
-                pst.setInt(6,item.getTotal());
+                
+                pst.setInt(4,item.getDiscount());
+                pst.setInt(5,item.getTotal());
+                
+                pst.setDouble(6,item.getRatePerUnit());
                 pst.execute();
             }
             
@@ -85,9 +87,9 @@ public class BillController {
                 while(rs2.next()){
                     String prodId = rs2.getString(2);
                     double quantity = rs2.getInt(3);
-                    int ratePerUnit = rs2.getInt(4);
-                    int discount = rs2.getInt(5);
-                    int total = rs2.getInt(6);
+                    int ratePerUnit = rs2.getInt(6);
+                    int discount = rs2.getInt(4);
+                    int total = rs2.getInt(5);
                     Product prod = ProductController.getProduct(prodId);
                     BillItem billItem = new BillItem(prod);
                     billItem.setQuantity(quantity);

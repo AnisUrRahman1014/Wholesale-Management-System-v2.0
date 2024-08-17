@@ -2,12 +2,12 @@ package Model;
 public class BillItem {
     private final Product product;
     private double quantity;
-    private int ratePerUnit;
+    private double ratePerUnit;
     private String unitType;
     private int total;
     private int discount = 0;
 
-    public BillItem(Product product, double quantity, int ratePerUnit,int discount, String unitType) {
+    public BillItem(Product product, double quantity, double ratePerUnit,int discount, String unitType) {
         this.product = product;
         this.quantity = quantity;
         this.ratePerUnit = ratePerUnit;
@@ -28,7 +28,7 @@ public class BillItem {
         return quantity;
     }
 
-    public int getRatePerUnit() {
+    public double getRatePerUnit() {
         return ratePerUnit;
     }
 
@@ -44,7 +44,7 @@ public class BillItem {
         this.quantity = quantity;
     }
 
-    public void setRatePerUnit(int ratePerUnit) {
+    public void setRatePerUnit(double ratePerUnit) {
         this.ratePerUnit = ratePerUnit;
     }
 
