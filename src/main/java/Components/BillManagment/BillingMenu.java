@@ -89,6 +89,7 @@ public class BillingMenu extends javax.swing.JPanel {
         selectedCtmLabel.setText(selectedCustomer.getName());
         quantityField.setText("1");
         ratePerUnitField.setText("0");
+        totalSaleField.setValue(0);
         updateBillId();
         updateTaxField();
         updateProductTable();
@@ -338,7 +339,7 @@ public class BillingMenu extends javax.swing.JPanel {
                 String prodId = model.getValueAt(row, 1).toString();
                 String prodName = model.getValueAt(row, 2).toString();
                 int discount = (int)model.getValueAt(row, 6);
-                int ratePerUnit = (int)model.getValueAt(row,4);
+                double ratePerUnit =(double)model.getValueAt(row,4);
                 
                 if(currentItem.getProduct().getProdID().equals(prodId) && currentItem.getProduct().getProdName().equals(prodName) && currentItem.getRatePerUnit() == ratePerUnit && currentItem.getDiscount() == discount){
                     JOptionPane.showMessageDialog(this, "Product already exists in the table","Redundancy Error",JOptionPane.ERROR_MESSAGE);
@@ -454,7 +455,7 @@ public class BillingMenu extends javax.swing.JPanel {
         for (int i = 0; i < model.getRowCount(); i++) {
             String prodName = (String) model.getValueAt(i, 2);
             double quantity = (double) model.getValueAt(i, 3);
-            int ratePerUnit = (int) model.getValueAt(i, 4);
+            double ratePerUnit = (double) model.getValueAt(i, 4);
             String unitType = (String) model.getValueAt(i, 5);
             int discount = (int) model.getValueAt(i, 6);
             int total = (int) model.getValueAt(i, 7);
@@ -469,7 +470,7 @@ public class BillingMenu extends javax.swing.JPanel {
             billItem.setRatePerUnit(ratePerUnit);
             billItem.setUnitType(unitType);
             billItem.setTotal(total);
-
+            System.out.println("Quantity frontend: "+billItem.getQuantity());
             // Add the created BillItem to the list
             billItems.add(billItem);
         }

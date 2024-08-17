@@ -40,7 +40,7 @@ public class BillController {
                 pst.setString(1, bill.getBillId());
                 pst.setString(2, item.getProduct().getProdID());
                 pst.setDouble(3,item.getQuantity());
-                
+                System.out.println("Quantity Backend: "+item.getQuantity());
                 pst.setInt(4,item.getDiscount());
                 pst.setInt(5,item.getTotal());
                 
@@ -86,8 +86,8 @@ public class BillController {
                 ResultSet rs2 = pst2.executeQuery();
                 while(rs2.next()){
                     String prodId = rs2.getString(2);
-                    double quantity = rs2.getInt(3);
-                    int ratePerUnit = rs2.getInt(6);
+                    double quantity = rs2.getDouble(3);
+                    double ratePerUnit = rs2.getDouble(6);
                     int discount = rs2.getInt(4);
                     int total = rs2.getInt(5);
                     Product prod = ProductController.getProduct(prodId);
@@ -95,6 +95,7 @@ public class BillController {
                     billItem.setQuantity(quantity);
                     billItem.setDiscount(discount);
                     billItem.setRatePerUnit(ratePerUnit);
+                    System.out.println(billItem.getRatePerUnit());
                     billItem.setUnitType(prod.getUnit());
                     billItem.setTotal(total);
                     billItems.add(billItem);

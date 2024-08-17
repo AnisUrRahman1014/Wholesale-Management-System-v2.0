@@ -42,6 +42,8 @@ public class BillDisplayDialog extends javax.swing.JDialog {
         Bill bill = BillController.getBill(billId, ctm);
         int count = 0;
         for(BillItem currentItem: bill.getBillItems()){
+            count++;
+            System.out.println(currentItem.getQuantity());
             Object row[]={count,currentItem.getProduct().getProdID(), currentItem.getProduct().getProdName(),currentItem.getQuantity(),currentItem.getRatePerUnit(),currentItem.getUnitType(),currentItem.getDiscount(),currentItem.getTotal()};
             model.addRow(row);
         }        
@@ -97,7 +99,7 @@ public class BillDisplayDialog extends javax.swing.JDialog {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false
