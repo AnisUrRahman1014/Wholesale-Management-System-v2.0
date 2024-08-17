@@ -156,13 +156,13 @@ public class ReportController {
                             tempReport.setAvailableCost(prod.getTotalCost());
                             tempReport.setAvgCostPerUnit(prod.getCostPerUnit());
 
-                            // Calculate total sale of this product for last 30 days
+                            // Calculate total sale of this product for selected range / days      
                             pst = con.prepareStatement("SELECT SUM(quantity), AVG(ratePerUnit), SUM(total) " +
                                 "FROM billItems " +
                                 "INNER JOIN bills ON billItems.billId = bills.billId " +
                                 "WHERE billItems.productId = ? " +
                                 "AND CAST(bills.date AS DATE) >= ? " +
-                                "AND CAST(bills.date AS DATE) < ?");
+                                "AND CAST(bills.date AS DATE) <= ?");
                             pst.setString(1, prod.getProdID());
                             pst.setDate(2, report.getFromDate());
                             pst.setDate(3, report.getToDate());

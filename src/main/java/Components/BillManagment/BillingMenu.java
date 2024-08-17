@@ -606,7 +606,7 @@ public class BillingMenu extends javax.swing.JPanel {
 
         totalStockField.setEditable(false);
         totalStockField.setForeground(new java.awt.Color(51, 255, 0));
-        totalStockField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        totalStockField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
         totalStockField.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         totalStockField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -646,12 +646,13 @@ public class BillingMenu extends javax.swing.JPanel {
                 .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(headerPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(taxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel19)
+                        .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(totalStockField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel25))))
+                                .addComponent(jLabel25))
+                            .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(taxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel19))))
                     .addGroup(headerPanelLayout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1466,7 +1467,7 @@ public class BillingMenu extends javax.swing.JPanel {
                 selectedCustomer = dialog.getSelectedCustomer();
             }
         });
-        System.out.println(selectedCustomer);
+        System.out.println(selectedCustomer.getName());
         dialog.setVisible(true);
     }//GEN-LAST:event_selectCtmBtnActionPerformed
 

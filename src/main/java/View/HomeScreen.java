@@ -19,8 +19,8 @@ public class HomeScreen extends javax.swing.JFrame {
         initComponents();
         tabbedContainer.add("Billing Module", new BillingMenu());
         tabbedContainer.add("Manage Customers", new CustomerManagementScreen());
-//        tabbedContainer.add("Employee Attendance", new EmployeeAttendance());
-//        tabbedContainer.add("Manage Payrolls", new PayrollManagementScreen());
+        tabbedContainer.add("Employee Attendance", new EmployeeAttendance());
+        tabbedContainer.add("Manage Payrolls", new PayrollManagementScreen());
         tabbedContainer.add("Report Managment",new ReportMenu());
         setMaximumSize(ManagementSystemCPU.getScreenSize());
         setTitle("Ghussia Shoppers Management System | Main Menu");   
